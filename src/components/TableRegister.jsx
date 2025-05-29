@@ -16,7 +16,15 @@ function TableRegister() {
     };
 
     getRegistrants();
-  }, [data]);
+  }, []);
+
+  const deleteRegistrant = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/registrants/${id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -38,7 +46,17 @@ function TableRegister() {
               <td>{registrant.course}</td>
               <td>{registrant.town}</td>
               <td>
-                <Button variant="danger">Delete</Button>
+                <div
+                  style={{ display: "flex", justifyContent: "space-around" }}
+                >
+                  <Button
+                    onClick={() => deleteRegistrant(registrant._id)}
+                    variant="danger"
+                  >
+                    Delete
+                  </Button>
+                  <Button variant="light">Edit</Button>
+                </div>
               </td>
             </tr>
           ))}

@@ -22,17 +22,18 @@ function FormRegister() {
   console.log(dataToBeSent);
   return (
     <>
-      <Form.Label htmlFor="">Name and Surname</Form.Label>
+      <Form.Label htmlFor="username">Name and Surname</Form.Label>
       <Form.Control
         type="text"
         name="name"
-        id="inputPassword5"
+        id="username"
         aria-describedby="passwordHelpBlock"
         onChange={handleFormData}
       />
-      <Form.Label htmlFor="">Courses</Form.Label>
+      <Form.Label htmlFor="course">Courses</Form.Label>
       <Form.Select
         aria-label="Default select example"
+        id="course"
         name="course"
         onChange={handleFormData}
       >
@@ -43,10 +44,11 @@ function FormRegister() {
         <option value="Back-end">Back-end</option>
         <option value="Fundamentals">Fundamentals</option>
       </Form.Select>
-      <Form.Label htmlFor="">Town</Form.Label>
+      <Form.Label htmlFor="town">Town</Form.Label>
       <Form.Select
         aria-label="Default select example"
         name="town"
+        id="town"
         onChange={handleFormData}
       >
         <option>Select a town</option>
