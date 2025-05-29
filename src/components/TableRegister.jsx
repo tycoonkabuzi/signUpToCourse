@@ -2,7 +2,7 @@ import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import axios from "axios";
-function TableRegister() {
+function TableRegister({ setRegistrantForm, setSingleRegistrant }) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -55,7 +55,20 @@ function TableRegister() {
                   >
                     Delete
                   </Button>
-                  <Button variant="light">Edit</Button>
+                  <Button
+                    variant="light"
+                    onClick={() => {
+                      setRegistrantForm(false);
+                      setSingleRegistrant({
+                        id: registrant._id,
+                        name: registrant.name,
+                        course: registrant.course,
+                        town: registrant.town,
+                      });
+                    }}
+                  >
+                    Edit
+                  </Button>
                 </div>
               </td>
             </tr>
