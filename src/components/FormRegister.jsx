@@ -1,17 +1,31 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 
 import Form from "react-bootstrap/Form";
-function FormRegister({
-  registrantForm,
-  singleRegistrant,
-  refreshData,
-  setRefreshData,
-}) {
-  const [dataToBeSent, setDataToBeSent] = useState({});
 
+function FormRegister({ registrantForm, singleRegistrant, setRefreshData }) {
+  const [dataToBeSent, setDataToBeSent] = useState({
+    name: "",
+    course: "",
+    town: "",
+  });
+  const [errorMessageToDisplay, setErrorMessageToDisplay] = useState({
+    status: "",
+    message: "",
+  });
   const [dataToUpdate, setDataToUpdate] = useState({});
+
+  const removeMessage = () => {
+    setTimeout(() => {
+      setErrorMessageToDisplay((prev) => ({
+        ...prev,
+        status: "",
+        message: "",
+      }));
+    }, 3000);
+  };
+
   useEffect(() => {
     setDataToUpdate({
       name: singleRegistrant?.name || "",
@@ -30,6 +44,14 @@ function FormRegister({
       await axios.post("http://localhost:3000/registrants", dataToBeSent);
       setRefreshData((prev) => !prev);
       setDataToBeSent([]);
+
+      setErrorMessageToDisplay((prev) => ({
+        ...prev,
+        status: "primary",
+        message: "Registered successfully to the course",
+      }));
+
+      removeMessage();
     } catch (error) {
       console.log(error);
     }
@@ -92,7 +114,44 @@ function FormRegister({
           <br />
           <Button
             onClick={() => {
-              sendDataToDataBase();
+              switch (true) {
+                case dataToBeSent.name === "" &&
+                  dataToBeSent.course === "" &&
+                  dataToBeSent.town === "":
+                  setErrorMessageToDisplay((prev) => ({
+                    ...prev,
+                    status: "danger",
+                    message: "None of the field is filled, kindly fill them",
+                  }));
+                  break;
+                case dataToBeSent.name === "":
+                  setErrorMessageToDisplay((prev) => ({
+                    ...prev,
+                    status: "danger",
+                    message: "The name field should not be empty",
+                  }));
+
+                  break;
+                case dataToBeSent.course === "":
+                  setErrorMessageToDisplay((prev) => ({
+                    ...prev,
+                    status: "danger",
+                    message: "You have to select a course",
+                  }));
+
+                  break;
+                case dataToBeSent.town === "":
+                  setErrorMessageToDisplay((prev) => ({
+                    ...prev,
+                    status: "danger",
+                    message: "You did not select a town",
+                  }));
+
+                  break;
+                default:
+                  sendDataToDataBase();
+                  break;
+              }
             }}
           >
             Add
@@ -149,6 +208,16 @@ function FormRegister({
           <br /> <br />
         </>
       )}
+
+      <>
+        {errorMessageToDisplay ? (
+          <Alert variant={errorMessageToDisplay.status}>
+            {errorMessageToDisplay.message}
+          </Alert>
+        ) : (
+          ""
+        )}
+      </>
     </>
   );
 }
