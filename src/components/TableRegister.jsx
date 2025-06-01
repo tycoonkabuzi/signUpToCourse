@@ -2,7 +2,12 @@ import Table from "react-bootstrap/Table";
 import { Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import axios from "axios";
-function TableRegister({ setRegistrantForm, setSingleRegistrant }) {
+function TableRegister({
+  setRegistrantForm,
+  setSingleRegistrant,
+  refreshData,
+  setRefreshData,
+}) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -16,11 +21,12 @@ function TableRegister({ setRegistrantForm, setSingleRegistrant }) {
     };
 
     getRegistrants();
-  }, []);
+  }, [refreshData]);
 
   const deleteRegistrant = async (id) => {
     try {
       await axios.delete(`http://localhost:3000/registrants/${id}`);
+      setRefreshData((prev) => !prev);
     } catch (error) {
       console.log(error);
     }

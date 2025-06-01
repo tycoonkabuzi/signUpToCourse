@@ -1,8 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
+
 import Form from "react-bootstrap/Form";
-function FormRegister({ registrantForm, singleRegistrant }) {
+function FormRegister({
+  registrantForm,
+  singleRegistrant,
+  refreshData,
+  setRefreshData,
+}) {
   const [dataToBeSent, setDataToBeSent] = useState({});
 
   const [dataToUpdate, setDataToUpdate] = useState({});
@@ -19,26 +25,31 @@ function FormRegister({ registrantForm, singleRegistrant }) {
     setDataToBeSent((prev) => ({ ...prev, [name]: value }));
   };
 
-  const sendDataToDataBase = () => {
+  const sendDataToDataBase = async () => {
     try {
-      axios.post("http://localhost:3000/registrants", dataToBeSent);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleEditForm = (e) => {
-    const name = e.target.name;
-    setDataToUpdate((prev) => ({ ...prev, [name]: e.target.value }));
-  };
-  const updateRegistrant = (id) => {
-    try {
-      axios.put(`http://localhost:3000/registrants/${id}`, dataToUpdate);
+      await axios.post("http://localhost:3000/registrants", dataToBeSent);
+      setRefreshData((prev) => !prev);
+      setDataToBeSent([]);
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(dataToUpdate);
+  const handleEditForm = (e) => {
+    const name = e.target.name;
+    setDataToUpdate((prev) => ({ ...prev, [name]: e.target.value }));
+  };
+
+  const updateRegistrant = async (id) => {
+    try {
+      await axios.put(`http://localhost:3000/registrants/${id}`, dataToUpdate);
+      setRefreshData((prev) => !prev);
+      setDataToUpdate([]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       {registrantForm ? (
@@ -50,6 +61,7 @@ function FormRegister({ registrantForm, singleRegistrant }) {
             id="username"
             aria-describedby="passwordHelpBlock"
             onChange={handleFormData}
+            value={dataToBeSent.name || ""}
           />
           <Form.Label htmlFor="course">Courses</Form.Label>
           <Form.Select
@@ -57,10 +69,9 @@ function FormRegister({ registrantForm, singleRegistrant }) {
             id="course"
             name="course"
             onChange={handleFormData}
+            value={dataToBeSent.course || ""}
           >
-            <option disabled selected>
-              Select a course
-            </option>
+            <option>Select a course</option>
             <option value="Front-End">Front-End</option>
             <option value="Back-end">Back-end</option>
             <option value="Fundamentals">Fundamentals</option>
@@ -71,6 +82,7 @@ function FormRegister({ registrantForm, singleRegistrant }) {
             name="town"
             id="town"
             onChange={handleFormData}
+            value={dataToBeSent.town || ""}
           >
             <option>Select a town</option>
             <option value="Krakow">Krakow</option>
@@ -78,7 +90,13 @@ function FormRegister({ registrantForm, singleRegistrant }) {
             <option value="Warsaw">Warsaw</option>
           </Form.Select>
           <br />
-          <Button onClick={sendDataToDataBase}>Add</Button>
+          <Button
+            onClick={() => {
+              sendDataToDataBase();
+            }}
+          >
+            Add
+          </Button>
           <br /> <br />
         </>
       ) : (
@@ -88,7 +106,7 @@ function FormRegister({ registrantForm, singleRegistrant }) {
             type="text"
             name="name"
             id="username"
-            value={dataToUpdate.name}
+            value={dataToUpdate.name || ""}
             aria-describedby="passwordHelpBlock"
             onChange={handleEditForm}
           />
@@ -98,7 +116,7 @@ function FormRegister({ registrantForm, singleRegistrant }) {
             id="course"
             name="course"
             onChange={handleEditForm}
-            value={dataToUpdate.course}
+            value={dataToUpdate.course || ""}
           >
             <option disabled selected>
               Select a course
@@ -113,7 +131,7 @@ function FormRegister({ registrantForm, singleRegistrant }) {
             name="town"
             id="town"
             onChange={handleEditForm}
-            value={dataToUpdate.town}
+            value={dataToUpdate.town || ""}
           >
             <option>Select a town</option>
             <option value="Krakow">Krakow</option>
@@ -121,7 +139,11 @@ function FormRegister({ registrantForm, singleRegistrant }) {
             <option value="Warsaw">Warsaw</option>
           </Form.Select>
           <br />
-          <Button onClick={() => updateRegistrant(singleRegistrant.id)}>
+          <Button
+            onClick={() => {
+              updateRegistrant(singleRegistrant.id);
+            }}
+          >
             save
           </Button>
           <br /> <br />
