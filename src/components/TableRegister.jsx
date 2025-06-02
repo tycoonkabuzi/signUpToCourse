@@ -7,6 +7,9 @@ function TableRegister({
   setSingleRegistrant,
   refreshData,
   setRefreshData,
+  setShow,
+  setToBeDeleted,
+  toBeDeleted,
 }) {
   const [data, setData] = useState([]);
 
@@ -22,15 +25,7 @@ function TableRegister({
 
     getRegistrants();
   }, [refreshData]);
-
-  const deleteRegistrant = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3000/registrants/${id}`);
-      setRefreshData((prev) => !prev);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  console.log(toBeDeleted);
 
   return (
     <div>
@@ -56,7 +51,10 @@ function TableRegister({
                   style={{ display: "flex", justifyContent: "space-around" }}
                 >
                   <Button
-                    onClick={() => deleteRegistrant(registrant._id)}
+                    onClick={async () => {
+                      await setToBeDeleted(registrant._id);
+                      setShow(true);
+                    }}
                     variant="danger"
                   >
                     Delete
